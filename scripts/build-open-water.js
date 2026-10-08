@@ -130,16 +130,25 @@ function buildRiverPolygon() {
 // Coves, marshes, and tidal preserves (e.g. Four Mile Cove Ecological
 // Preserve) that sit *inside* the City boundary — the fringe above only
 // covers water outside it, and missing these stranded a whole quadrant of
-// real saltwater canals from the routing graph (see DATA_NOTES.md). Pulled
-// from OSM natural=water/wetland, filtered to bodies big enough to be a real
-// cove rather than an individual canal OSM also traces, and excluding
-// anything that substantially overlaps the City's own FRESHWATER canal
-// polygons — those are just OSM's independent trace of the same interior
-// lake, not tidal water, and must not be treated as open water.
+// real saltwater canals from the routing graph (see DATA_NOTES.md).
+//
+// Pulled from OSM natural=water/wetland, then held to two tests so interior
+// water that is NOT the Gulf side doesn't get counted as open water. (An
+// earlier version only checked size and freshwater overlap, and a 14-acre
+// inland canal basin near SW 28th Terrace was treated as open water, so a
+// listing 2 bridges and ~45 minutes from open water reported 0 miles.)
+//   1. It must not substantially overlap ANY of the City's canal polygons,
+//      salt or fresh. If it does, it's just OSM's trace of the canal system
+//      itself, not water beyond it.
+//   2. It must connect (within ~30m) to water already known to be open —
+//      the boundary fringe, river, or Pass — directly or through other
+//      accepted pieces. A cove that can't be reached from open water isn't
+//      open water, however big it is.
 const MIN_AREA_M2 = 15000; // ~1.5 hectares; well above a single residential canal, below a real cove
-const FRESHWATER_OVERLAP_THRESHOLD = 0.5; // fraction of the OSM polygon's area
+const CANAL_OVERLAP_THRESHOLD = 0.5; // fraction of the OSM polygon's area
+const CONNECT_TOLERANCE_METERS = 30;
 
-function buildLargeWaterBodiesPolygon() {
+function buildLargeWaterBodiesPolygon(baseOpenWater) {
   const waterPath = path.join(ROOT, 'data/raw/large-water-bodies.geojson');
   if (!fs.existsSync(waterPath)) {
     console.warn('  WARNING: large-water-bodies.geojson not found — run npm run data:fetch-osm first. Skipping.');
@@ -147,42 +156,79 @@ function buildLargeWaterBodiesPolygon() {
   }
   const waterBodies = JSON.parse(fs.readFileSync(waterPath, 'utf8'));
   const canals = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/raw/canals.geojson'), 'utf8'));
-  const freshCanals = canals.features.filter((f) => f.properties.WATER_TYPE === 'FRESH' && isValidPolygonFeature(f));
+  const allCanals = canals.features.filter(isValidPolygonFeature).map((c) => ({ c, bbox: turf.bbox(c) }));
 
-  const candidates = waterBodies.features.filter((f) => {
+  const sized = waterBodies.features.filter((f) => {
     if (!isValidPolygonFeature(f)) return false;
-    let area;
     try {
-      area = turf.area(f);
+      return turf.area(f) >= MIN_AREA_M2;
     } catch {
       return false;
     }
-    if (area < MIN_AREA_M2) return false;
+  });
 
+  const notCanalSystem = sized.filter((f) => {
+    const area = turf.area(f);
+    const fb = turf.bbox(f);
     let overlapArea = 0;
-    for (const fresh of freshCanals) {
+    for (const { c, bbox } of allCanals) {
+      if (bbox[0] > fb[2] || bbox[2] < fb[0] || bbox[1] > fb[3] || bbox[3] < fb[1]) continue;
       try {
-        if (!turf.booleanIntersects(f, fresh)) continue;
-        const inter = turf.intersect(turf.featureCollection([f, fresh]));
+        if (!turf.booleanIntersects(f, c)) continue;
+        const inter = turf.intersect(turf.featureCollection([f, c]));
         if (inter) overlapArea += turf.area(inter);
       } catch {
         // ignore malformed intersections, treat as no overlap
       }
     }
-    return overlapArea / area < FRESHWATER_OVERLAP_THRESHOLD;
+    return overlapArea / area < CANAL_OVERLAP_THRESHOLD;
   });
 
-  console.log(
-    `  ${waterBodies.features.length} OSM water/wetland polygons -> ${candidates.length} kept after size + freshwater-overlap filtering`,
-  );
-  if (candidates.length === 0) return null;
+  // Flood outward from the known open water: accept a piece once it touches
+  // (within tolerance) the open water or any piece already accepted.
+  const accepted = [];
+  let reachable = baseOpenWater;
+  let remaining = notCanalSystem.map((f) => ({ f, grown: turf.buffer(f, CONNECT_TOLERANCE_METERS, { units: 'meters' }) }));
+  let changed = true;
+  while (changed && remaining.length) {
+    changed = false;
+    const stillRemaining = [];
+    const newlyAccepted = [];
+    for (const item of remaining) {
+      let touches = false;
+      try {
+        touches = turf.booleanIntersects(item.grown, reachable);
+      } catch {
+        touches = false;
+      }
+      if (touches) newlyAccepted.push(item.f);
+      else stillRemaining.push(item);
+    }
+    if (newlyAccepted.length) {
+      changed = true;
+      accepted.push(...newlyAccepted);
+      for (const f of newlyAccepted) {
+        try {
+          reachable = turf.union(turf.featureCollection([reachable, f]));
+        } catch {
+          // skip pieces that don't union cleanly rather than aborting the whole build
+        }
+      }
+    }
+    remaining = stillRemaining;
+  }
 
-  let union = candidates[0];
-  for (let i = 1; i < candidates.length; i++) {
+  console.log(
+    `  ${waterBodies.features.length} OSM water/wetland polygons -> ${sized.length} big enough -> ${notCanalSystem.length} not just the canal system -> ${accepted.length} connected to open water`,
+  );
+  if (accepted.length === 0) return null;
+
+  let union = accepted[0];
+  for (let i = 1; i < accepted.length; i++) {
     try {
-      union = turf.union(turf.featureCollection([union, candidates[i]]));
+      union = turf.union(turf.featureCollection([union, accepted[i]]));
     } catch {
-      // skip pieces that don't union cleanly rather than aborting the whole build
+      // skip
     }
   }
   return union;
@@ -233,8 +279,6 @@ async function main() {
   if (boundaryFringe) pieces.push(boundaryFringe);
   const riverPolygon = buildRiverPolygon();
   if (riverPolygon) pieces.push(riverPolygon);
-  const largeWaterBodies = buildLargeWaterBodiesPolygon();
-  if (largeWaterBodies) pieces.push(largeWaterBodies);
 
   let combined = pieces[0];
   for (let i = 1; i < pieces.length; i++) {
@@ -242,6 +286,15 @@ async function main() {
       combined = turf.union(turf.featureCollection([combined, pieces[i]]));
     } catch (err) {
       console.warn(`  WARNING: could not union piece ${i} into open-water polygon, skipping it:`, err.message);
+    }
+  }
+
+  const largeWaterBodies = buildLargeWaterBodiesPolygon(combined);
+  if (largeWaterBodies) {
+    try {
+      combined = turf.union(turf.featureCollection([combined, largeWaterBodies]));
+    } catch (err) {
+      console.warn('  WARNING: could not union connected coves into open-water polygon:', err.message);
     }
   }
 

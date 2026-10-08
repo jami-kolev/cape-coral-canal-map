@@ -94,14 +94,15 @@ from four pieces, unioned together:
 3. **Matlacha Pass / San Carlos Bay / the Gulf**: still hand-drawn, since no
    clean public polygon was found for that side. This is the one piece most
    worth a visual sanity check — see `debug-preview.html`.
-4. **Large coves, marshes, and tidal preserves that sit *inside* the City
-   boundary** — e.g. the 365-acre Four Mile Cove Ecological Preserve. Piece
-   #1 only covers water *outside* the boundary, and missing these stranded a
-   whole quadrant of real saltwater canals from the routing graph (see "Known
-   gaps" below). Pulled from OSM, kept only if the polygon is at least 1.5
-   hectares (filters out OSM's own traces of individual canals) and doesn't
-   substantially overlap one of the City's own FRESHWATER canal polygons
-   (which would mean it's just an interior lake, not tidal water).
+4. **Coves and marshes inside the City boundary that connect to open
+   water** (e.g. Four Mile Cove). Pulled from OSM, kept only if the polygon
+   is at least 1.5 hectares, does NOT substantially overlap any of the City's
+   own canal polygons (salt or fresh; if it does, it's just OSM's trace of the
+   canal system itself), and touches water already known to be open, directly
+   or through other accepted pieces. An earlier version skipped the last two
+   tests and counted a 14-acre inland canal basin near SW 28th Terrace as
+   open water, so a canal with 2 bridges and about 45 minutes to open water
+   reported 0 miles. Fixed 2026-10-08.
 
 This is an approximation for routing and display, **not a navigational
 boundary**, and is clearly labeled as such in its own GeoJSON properties. One
@@ -139,24 +140,18 @@ boundary before this ships.
      confirmed there are no SALT/FRESH canal pairs touching without a weir
      between them.
 
-  The much bigger fix turned out to be the open-water boundary itself, not
-  the canal graph — see the open-water section above (piece #4, large coves
-  inside city limits). An earlier version of the boundary only covered water
-  *outside* the City's edge, so the whole graph was sound but a huge share of
-  canals simply couldn't reach a polygon that represented where they actually
-  empty out. Fixing that alone raised full route detail from 298 to
-  **532 of 630 saltwater canals** (84%).
+  After all of that: **298 of 630 saltwater canals** get full route detail
+  (bridges in order, distance, lowest clearance, idle time). An earlier build
+  showed 532, but that number was inflated: it counted inland canal basins as
+  open water, which made routes too short or zero. 298 is the honest count.
 
-  The remaining **98** (12 disconnected pockets, largest 21 canals) don't have
-  a traceable path in this graph, but the City's own `NAV_SYST` field already
-  classifies every one of them as part of a named spreader system (`SW-A`
-  through `SW-E`) — so the app still says "yes, gulf access," sourced from
-  that classification, and is explicit that the detailed route isn't
-  available rather than guessing at one. This seemed clearly better than the
-  alternative of a false "no gulf access" on a canal the City itself
-  classifies as connected. `data/processed/network-summary.json` lists every
-  one of these by name for reference — worth a look since a few might be true
-  one-off digitization gaps you'd want fixed by hand.
+  The other **332** (mostly the southeast, along the river) don't have a
+  traceable path, but the City's own `NAV_SYST` field classifies every one of
+  them as part of a named spreader system (`SW-A` through `SW-E`), so the app
+  still says "yes, gulf access," sourced from that classification, and says
+  plainly that the detailed route isn't available rather than guessing.
+  `data/processed/network-summary.json` lists them by name. Closing this gap
+  needs the real river-side openings of those canals traced.
 - **10 of 29 weirs** sit near only one other canal within the search radius
   (rather than the two you'd expect — upstream and downstream) — usually
   because the "other side" is a different disconnected polygon segment of the
