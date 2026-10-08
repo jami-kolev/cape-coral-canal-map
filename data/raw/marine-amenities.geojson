@@ -1,0 +1,404 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": "BMX Park Boat Ramp",
+    "osm_type": "node",
+    "osm_id": 986140850,
+    "tags": {
+     "leisure": "slipway",
+     "name": "BMX Park Boat Ramp"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9898287,
+     26.6244012
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 2138681150,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9400929,
+     26.6750205
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 2274018837,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -82.0426346,
+     26.6472042
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "marina",
+    "name": "Cape Coral Yacht Club",
+    "osm_type": "node",
+    "osm_id": 2807733725,
+    "tags": {
+     "leisure": "marina",
+     "name": "Cape Coral Yacht Club",
+     "seamark:harbour:category": "marina",
+     "seamark:type": "harbour"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9514457,
+     26.5428428
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": "Cape Coral Yacht Club Boat Ramp",
+    "osm_type": "node",
+    "osm_id": 3010026108,
+    "tags": {
+     "leisure": "slipway",
+     "name": "Cape Coral Yacht Club Boat Ramp"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9523496,
+     26.5425172
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": "Boat Ramp Herman Horton Park",
+    "osm_type": "node",
+    "osm_id": 3010026111,
+    "tags": {
+     "leisure": "slipway",
+     "name": "Boat Ramp Herman Horton Park"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9135685,
+     26.6074863
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": "Rosen Park Boat Ramp",
+    "osm_type": "node",
+    "osm_id": 3010026123,
+    "tags": {
+     "leisure": "slipway",
+     "name": "Rosen Park Boat Ramp"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9221638,
+     26.624311
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": "Rosen Park Boat Ramp",
+    "osm_type": "node",
+    "osm_id": 3010026125,
+    "tags": {
+     "leisure": "slipway",
+     "name": "Rosen Park Boat Ramp"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9218488,
+     26.6243115
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 3279041326,
+    "tags": {
+     "canoe": "yes",
+     "kayak": "yes",
+     "leisure": "slipway",
+     "motorboat": "no",
+     "paddlecraft": "yes"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -82.0557463,
+     26.6441232
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 3897325695,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9338164,
+     26.6199712
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 5332144904,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9398506,
+     26.7169211
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 5360102998,
+    "tags": {
+     "leisure": "slipway",
+     "surface": "dirt"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9256749,
+     26.6426615
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 6442374764,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -82.0078956,
+     26.5438479
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "marina",
+    "name": "Tarpon Point Marina",
+    "osm_type": "node",
+    "osm_id": 7107428774,
+    "tags": {
+     "capacity": "216",
+     "fee": "yes",
+     "leisure": "marina",
+     "name": "Tarpon Point Marina",
+     "power_supply": "yes",
+     "sanitary_dump_station": "yes",
+     "seamark:harbour:category": "marina",
+     "seamark:type": "harbour"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9998993,
+     26.5391764
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "node",
+    "osm_id": 12426878452,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9931652,
+     26.6385065
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "marina",
+    "name": null,
+    "osm_type": "way",
+    "osm_id": 214809621,
+    "tags": {
+     "leisure": "marina",
+     "seamark:harbour:category": "marina",
+     "seamark:type": "harbour"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9508199,
+     26.5438059
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "ramp",
+    "name": null,
+    "osm_type": "way",
+    "osm_id": 214809953,
+    "tags": {
+     "leisure": "slipway"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9522532,
+     26.5426758
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "fuel",
+    "name": "Boaters Paradise",
+    "osm_type": "node",
+    "osm_id": 8499225849,
+    "tags": {
+     "name": "Boaters Paradise",
+     "shop": "boat"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9958193,
+     26.6439102
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "category": "fuel",
+    "name": "WMF Watercraft & Marine",
+    "osm_type": "node",
+    "osm_id": 10747621566,
+    "tags": {
+     "addr:city": "Cape Coral",
+     "addr:housenumber": "1037",
+     "addr:postcode": "33991",
+     "addr:state": "FL",
+     "addr:street": "Southwest Pine Island Road",
+     "name": "WMF Watercraft & Marine",
+     "opening_hours": "Mo-Fr 08:00-17:00",
+     "payment:american_express": "yes",
+     "payment:cash": "yes",
+     "payment:cheque": "yes",
+     "payment:discover_card": "yes",
+     "payment:mastercard": "yes",
+     "payment:visa": "yes",
+     "phone": "+1-239-573-6256",
+     "shop": "boat",
+     "website": "https://www.wmfwatercraft.com/"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.9960597,
+     26.6441944
+    ]
+   }
+  }
+ ]
+}

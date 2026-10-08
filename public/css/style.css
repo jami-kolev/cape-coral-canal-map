@@ -1,0 +1,525 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --pure-white: #ffffff;
+  --warm-white: #faf8f5;
+  --linen-stone: #e4e0d6;
+  --harbor-blue: #5d82a3;
+  --deep-water: #33546c;
+  --ink-black: #191919;
+
+  /* Map + legend colors, kept in the same coastal family as the brand palette
+     but extended since the legend needs 8+ distinguishable marks. */
+  --map-saltwater: #5d82a3;
+  --map-freshwater: #7a9b76;
+  --map-bridge-high: #33546c;
+  --map-bridge-mid: #c98a3e;
+  --map-bridge-low: #a4503a;
+  --map-bridge-unknown: #9a968d;
+  --map-weir: #191919;
+  --map-ramp: #3f7d6b;
+  --map-fuel: #8b5fa3;
+
+  --font-headline: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(25, 25, 25, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-ui);
+  color: var(--ink-black);
+  background: var(--warm-white);
+}
+
+#app {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- Header ---------- */
+
+#header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.9));
+  border-bottom: 1px solid var(--linen-stone);
+  backdrop-filter: blur(4px);
+}
+
+#brand {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--deep-water);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Narrow phones: the title + search input + button don't fit on one line
+   without crowding, so stack the search onto its own row. */
+@media (max-width: 480px) {
+  #header {
+    flex-wrap: wrap;
+  }
+
+  #brand {
+    font-size: 17px;
+    flex-basis: 100%;
+  }
+
+  #search-form {
+    flex-basis: 100%;
+  }
+}
+
+#brand em {
+  font-style: italic;
+  color: var(--harbor-blue);
+}
+
+#search-form {
+  flex: 1;
+  display: flex;
+  position: relative;
+  min-width: 0;
+}
+
+#search-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--linen-stone);
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  background: var(--pure-white);
+  color: var(--ink-black);
+}
+
+#search-input:focus {
+  outline: 2px solid var(--harbor-blue);
+  outline-offset: 1px;
+}
+
+#search-button {
+  margin-left: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--ink-black);
+  color: var(--pure-white);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+#search-button:hover {
+  background: var(--deep-water);
+}
+
+#search-button:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--harbor-blue);
+  outline-offset: 2px;
+}
+
+#search-status {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  padding: 10px 14px;
+  background: var(--pure-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-size: 14px;
+  display: none;
+}
+
+#search-status.visible {
+  display: block;
+}
+
+/* ---------- Floating controls ---------- */
+
+.map-controls {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--linen-stone);
+  background: var(--pure-white);
+  box-shadow: var(--shadow);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--deep-water);
+}
+
+.control-button:hover {
+  background: var(--warm-white);
+}
+
+/* ---------- Panels (legend / layers / detail) ---------- */
+
+.panel {
+  position: absolute;
+  z-index: 1100;
+  background: var(--pure-white);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius) var(--radius) 0 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.panel.open {
+  transform: translateY(0);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--linen-stone);
+  position: sticky;
+  top: 0;
+  background: var(--pure-white);
+}
+
+.panel-header h2 {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+  color: var(--deep-water);
+}
+
+.panel-close {
+  border: none;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink-black);
+  padding: 4px 8px;
+}
+
+.panel-body {
+  padding: 14px 16px 20px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------- Legend ---------- */
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.legend-swatch.dot {
+  border-radius: 50%;
+}
+
+.legend-source {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linen-stone);
+  font-size: 12px;
+  color: #6b6b6b;
+  line-height: 1.5;
+}
+
+/* ---------- Layer toggles ---------- */
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.toggle-row label {
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.toggle-row input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--harbor-blue);
+  cursor: pointer;
+}
+
+/* ---------- Canal / bridge / weir detail ---------- */
+
+.detail-kicker {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  /* Deep Water, not Harbor Blue, at this small a size: Harbor Blue on white
+     only reaches ~4:1 contrast, short of WCAG AA's 4.5:1 for text this size. */
+  color: var(--deep-water);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.detail-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.detail-stat {
+  background: var(--warm-white);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.detail-stat .label {
+  font-size: 12px;
+  color: #6b6b6b;
+}
+
+.detail-stat .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--deep-water);
+}
+
+.bridge-list {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.bridge-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linen-stone);
+  gap: 10px;
+}
+
+.bridge-list li:last-child {
+  border-bottom: none;
+}
+
+.clearance-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pure-white);
+  white-space: nowrap;
+}
+
+.data-gap-note {
+  background: var(--warm-white);
+  border-left: 3px solid var(--map-bridge-mid);
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+.cta-box {
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--deep-water);
+  border-radius: var(--radius);
+  color: var(--pure-white);
+}
+
+.cta-box p {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.cta-button {
+  display: inline-block;
+  background: var(--pure-white);
+  color: var(--deep-water);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.cta-button:hover {
+  background: var(--warm-white);
+}
+
+.disclaimer-note {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b6b6b;
+}
+
+/* ---------- Footer strip ---------- */
+
+#footer-strip {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 900;
+  font-size: 11px;
+  color: var(--ink-black);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 5px 10px;
+  border-radius: 999px;
+  max-width: 60%;
+}
+
+#footer-strip button {
+  border: none;
+  background: none;
+  color: var(--deep-water);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  font-family: inherit;
+}
+
+/* ---------- Leaflet marker tweaks ---------- */
+
+.canal-marker-icon,
+.bridge-marker-icon,
+.weir-marker-icon,
+.amenity-marker-icon {
+  border-radius: 50%;
+  border: 2px solid var(--pure-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.leaflet-popup-content h3 {
+  font-family: var(--font-headline);
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: var(--deep-water);
+}
+
+/* ---------- Desktop layout ---------- */
+
+@media (min-width: 860px) {
+  #brand {
+    font-size: 24px;
+  }
+
+  .panel {
+    left: auto;
+    right: 16px;
+    bottom: 16px;
+    width: 380px;
+    max-height: calc(100vh - 100px);
+    border-radius: var(--radius);
+    transform: translateX(420px);
+    transition: transform 0.25s ease;
+  }
+
+  .panel.open {
+    transform: translateX(0);
+  }
+
+  .map-controls {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  #app:has(.panel.open) .map-controls {
+    right: 412px;
+  }
+}
+
+/* ---------- Accessibility helpers ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}

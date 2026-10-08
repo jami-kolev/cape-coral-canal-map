@@ -1,0 +1,22 @@
+{
+  "name": "cape-coral-canal-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "data:fetch-city": "node scripts/fetch-city-gis.js",
+    "data:fetch-osm": "node scripts/fetch-osm.js",
+    "data:build-water": "node scripts/build-open-water.js",
+    "data:build-network": "node scripts/build-network.js",
+    "data:build-web": "node scripts/build-web-data.js",
+    "data:refresh": "npm run data:fetch-city && npm run data:fetch-osm && npm run data:build-water && npm run data:build-network && npm run data:build-web",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@turf/turf": "^7.4.0"
+  }
+}

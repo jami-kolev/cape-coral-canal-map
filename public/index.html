@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cape Coral Canal &amp; Gulf Access Map | The Kolev Group</title>
+<meta name="description" content="Find out if a Cape Coral canal reaches the Gulf, which bridges are on the way out, and roughly how long the idle out takes. A tool from The Kolev Group at Premiere Plus Realty." />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+  <!-- Header comes before the map in source order so Tab reaches the address
+       search (the main keyboard-accessible way to use this app) before the
+       map's own pan/zoom keyboard handling. -->
+  <header id="header">
+    <span id="brand">Canal <em>&amp; Gulf Access</em> Map</span>
+    <form id="search-form" role="search">
+      <label for="search-input" class="sr-only">Search a Cape Coral address</label>
+      <input
+        id="search-input"
+        type="text"
+        placeholder="Search a Cape Coral address..."
+        autocomplete="off"
+        aria-describedby="search-status"
+      />
+      <button id="search-button" type="submit">Search</button>
+      <div id="search-status" role="status" aria-live="polite"></div>
+    </form>
+  </header>
+
+  <div id="map" role="application" aria-label="Cape Coral canal map"></div>
+
+  <div class="map-controls">
+    <button class="control-button" id="legend-toggle" type="button" aria-expanded="false" aria-controls="legend-panel" title="Legend">
+      <span aria-hidden="true">&#9776;</span>
+      <span class="sr-only">Legend</span>
+    </button>
+    <button class="control-button" id="layers-toggle" type="button" aria-expanded="false" aria-controls="layers-panel" title="Layers">
+      <span aria-hidden="true">&#128506;</span>
+      <span class="sr-only">Layers</span>
+    </button>
+  </div>
+
+  <div id="footer-strip">
+    Reference data, not for navigation.
+    <button id="disclaimer-toggle" type="button">Full disclaimer &amp; sources</button>
+  </div>
+
+  <!-- Legend panel -->
+  <section class="panel" id="legend-panel" aria-label="Map legend" inert>
+    <div class="panel-header">
+      <h2>Legend</h2>
+      <button class="panel-close" type="button" data-close-panel="legend-panel" aria-label="Close legend">&times;</button>
+    </div>
+    <div class="panel-body">
+      <div class="legend-row"><span class="legend-swatch" style="background:var(--map-saltwater)"></span>Saltwater canal</div>
+      <div class="legend-row"><span class="legend-swatch" style="background:var(--map-freshwater)"></span>Freshwater canal</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-bridge-high)"></span>Bridge, 9 ft and up</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-bridge-mid)"></span>Bridge, 6 to 9 ft</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-bridge-low)"></span>Bridge, under 6 ft</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-bridge-unknown)"></span>Clearance not recorded</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-weir)"></span>Weir</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-ramp)"></span>Boat ramp</div>
+      <div class="legend-row"><span class="legend-swatch dot" style="background:var(--map-fuel)"></span>Fuel</div>
+      <div class="legend-source">
+        Canal, bridge, and weir data: City of Cape Coral GIS. Boat ramps, marina, and fuel points: OpenStreetMap contributors.
+        Basemap: Esri. Address search: OpenStreetMap Nominatim.
+      </div>
+    </div>
+  </section>
+
+  <!-- Layers panel -->
+  <section class="panel" id="layers-panel" aria-label="Map layers" inert>
+    <div class="panel-header">
+      <h2>Layers</h2>
+      <button class="panel-close" type="button" data-close-panel="layers-panel" aria-label="Close layers">&times;</button>
+    </div>
+    <div class="panel-body">
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-canals" checked />
+        <label for="toggle-canals">Canals</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-bridges" checked />
+        <label for="toggle-bridges">Bridges</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-weirs" checked />
+        <label for="toggle-weirs">Weirs</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="toggle-amenities" checked />
+        <label for="toggle-amenities">Ramps &amp; fuel</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Canal / bridge / weir detail panel -->
+  <section class="panel" id="detail-panel" aria-label="Details" aria-live="polite" inert>
+    <div class="panel-header">
+      <h2 id="detail-title">Details</h2>
+      <button class="panel-close" type="button" data-close-panel="detail-panel" aria-label="Close details">&times;</button>
+    </div>
+    <div class="panel-body" id="detail-body"></div>
+  </section>
+
+  <!-- Full disclaimer panel -->
+  <section class="panel" id="disclaimer-panel" aria-label="Disclaimer and sources" inert>
+    <div class="panel-header">
+      <h2>About this map</h2>
+      <button class="panel-close" type="button" data-close-panel="disclaimer-panel" aria-label="Close disclaimer">&times;</button>
+    </div>
+    <div class="panel-body">
+      <p>
+        This map is built from City of Cape Coral GIS records. It is reference data, not a survey and not for
+        navigation. Bridge clearances are approximate and not tide specific. Before making an offer, verify the
+        route, every bridge, depth, seawall, and Gulf access with a surveyor, a marine contractor, and the City.
+      </p>
+      <p>
+        Canal, bridge, and weir data comes from the City of Cape Coral's public GIS. Boat ramps, marinas, and fuel
+        points come from OpenStreetMap contributors under the Open Database License. The basemap is provided by
+        Esri. Address search uses OpenStreetMap's Nominatim geocoder.
+      </p>
+      <p class="disclaimer-note">The Kolev Group at Premiere Plus Realty, Cape Coral, FL.</p>
+    </div>
+  </section>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="js/config.js"></script>
+<script src="js/geo-utils.js"></script>
+<script src="js/app.js"></script>
+<script src="js/embed-resize.js"></script>
+</body>
+</html>

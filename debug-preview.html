@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Data pipeline debug preview</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  html, body, #map { height: 100%; margin: 0; }
+  .legend { background: white; padding: 8px 10px; font: 13px sans-serif; line-height: 1.5; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+  .legend div span { display:inline-block; width:14px; height:14px; margin-right:6px; vertical-align:middle; border-radius:2px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const hashParts = location.hash.replace('#','').split(',').map(Number);
+const initialView = hashParts.length === 3 && hashParts.every(n => !isNaN(n))
+  ? [[hashParts[0], hashParts[1]], hashParts[2]]
+  : [[26.63, -82.0], 12];
+const map = L.map('map').setView(initialView[0], initialView[1]);
+map.on('moveend zoomend', () => {
+  const c = map.getCenter();
+  history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${map.getZoom()}`);
+});
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+function loadJSON(url) { return fetch(url).then(r => r.json()); }
+
+Promise.all([
+  loadJSON('data/raw/open-water.geojson'),
+  loadJSON('data/raw/canals.geojson'),
+  loadJSON('data/raw/bridges.geojson'),
+  loadJSON('data/raw/weirs.geojson'),
+  loadJSON('data/raw/marine-amenities.geojson'),
+  loadJSON('data/raw/city-boundary.geojson'),
+  loadJSON('data/processed/routes.json').catch(() => ({})),
+]).then(([water, canals, bridges, weirs, amenities, boundary, routes]) => {
+
+  L.geoJSON(water, { style: { color: '#2a6f97', weight: 1, fillColor: '#bfe3f0', fillOpacity: 0.5 } }).addTo(map);
+  L.geoJSON(boundary, { style: { color: '#333', weight: 2, fill: false, dashArray: '4 4' } }).addTo(map);
+
+  function canalColor(f) {
+    const route = routes[f.properties.OBJECTID];
+    if (f.properties.WATER_TYPE !== 'SALT') return '#8fc79a'; // freshwater
+    if (!route) return '#999';
+    if (route.routeLine) return '#1d6fa3'; // full route detail
+    if (route.gulfAccess) return '#e0a72a'; // gulf access, no route detail (data gap)
+    return '#c0392b'; // shouldn't happen post-fix
+  }
+
+  L.geoJSON(canals, {
+    style: (f) => ({
+      color: canalColor(f),
+      weight: 1,
+      fillColor: canalColor(f),
+      fillOpacity: 0.75,
+    }),
+    onEachFeature: (f, layer) => {
+      const route = routes[f.properties.OBJECTID];
+      const status = !route
+        ? 'no route data'
+        : route.routeLine
+        ? `full route: ${route.distanceMiles} mi, ${route.bridgeCount} bridge(s), idle ~${route.idleTimeMinutes} min`
+        : route.gulfAccess
+        ? 'gulf access (City classification), route detail unavailable'
+        : 'no gulf access';
+      layer.bindPopup(`${f.properties.NAME}<br>${f.properties.WATER_TYPE} / ${f.properties.NAV_SYST}<br>${status}`);
+    },
+  }).addTo(map);
+
+  L.geoJSON(bridges, {
+    style: { color: '#e07a1f', weight: 3 },
+    onEachFeature: (f, layer) => layer.bindPopup(`Bridge ${f.properties.BRIDGE_NUMBER}<br>${f.properties.CANAL_NAME}<br>Clearance: ${f.properties.VerticalClearance ?? 'not recorded'} ft`),
+  }).addTo(map);
+
+  L.geoJSON(weirs, {
+    pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, color: '#a3221d', fillColor: '#e0521f', fillOpacity: 1 }),
+    onEachFeature: (f, layer) => layer.bindPopup(`Weir: ${f.properties.CANAL}<br>${f.properties.STRUCTURE_TYPE}`),
+  }).addTo(map);
+
+  L.geoJSON(amenities, {
+    pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 6, color: '#000', fillColor: f.properties.category === 'fuel' ? '#ffcc00' : '#00aa55', fillOpacity: 1 }),
+    onEachFeature: (f, layer) => layer.bindPopup(`${f.properties.category}: ${f.properties.name || '(unnamed)'}`),
+  }).addTo(map);
+
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = () => {
+    const div = L.DomUtil.create('div', 'legend');
+    div.innerHTML = `
+      <div><span style="background:#bfe3f0"></span>Open water (draft boundary)</div>
+      <div><span style="background:#1d6fa3"></span>Saltwater: full route detail</div>
+      <div><span style="background:#e0a72a"></span>Saltwater: gulf access, no route detail</div>
+      <div><span style="background:#8fc79a"></span>Freshwater canal</div>
+      <div><span style="background:#e07a1f"></span>Bridge</div>
+      <div><span style="background:#e0521f"></span>Weir</div>
+      <div><span style="background:#00aa55"></span>Ramp/marina</div>
+      <div><span style="background:#ffcc00"></span>Fuel</div>
+    `;
+    return div;
+  };
+  legend.addTo(map);
+});
+</script>
+</body>
+</html>

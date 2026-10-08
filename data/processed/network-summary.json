@@ -1,0 +1,661 @@
+{
+ "builtAt": "2026-09-23T21:12:56.992Z",
+ "noWakeSpeedMph": 5,
+ "canalNodeCount": 959,
+ "connectedComponents": 31,
+ "smallFragments": [
+  {
+   "size": 1,
+   "names": [
+    "BUCCANEER BASIN"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "CASSANDRA CANAL"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "NORFOLK CANAL"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "NASSAU CANAL"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "CRYSTAL LAKE"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "LAKE ONE"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 1,
+   "names": [
+    "LAKE TWO"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 2,
+   "names": [
+    "CARNAVAL CANAL",
+    "FIGARO CANAL"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 2,
+   "names": [
+    "DEWBERRY CANAL",
+    "FAWN CANAL"
+   ],
+   "waterTypes": [
+    "FRESH"
+   ]
+  },
+  {
+   "size": 2,
+   "names": [
+    "CORAL POINTE CANAL",
+    "OTTERSREST CANAL"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  },
+  {
+   "size": 2,
+   "names": [
+    "BIKINI BASIN",
+    "BIKINI CANAL"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  },
+  {
+   "size": 3,
+   "names": [
+    "ANCHORAGE CANAL",
+    "FLAMINGO CANAL",
+    "FLORIDAN CANAL"
+   ],
+   "waterTypes": [
+    "SALT"
+   ]
+  }
+ ],
+ "weirEdgesBlocked": 1,
+ "weirsUnmatched": [
+  {
+   "canal": "FRONTIER CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "HORSESHOE CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "HERMOSA CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "MEADE CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "DEWBERRY CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "BARKENTINE CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "GATOR SLOUGH CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "CARNAVAL CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "GAINSBOROUGH CANAL",
+   "reason": "found 1 touching canal(s)"
+  },
+  {
+   "canal": "MIDSUMMER CANAL",
+   "reason": "found 1 touching canal(s)"
+  }
+ ],
+ "bridgesUnmatched": [],
+ "crossTypeLeaks": [],
+ "saltCanalsWithFullRouteDetail": 532,
+ "saltCanalsGulfAccessNoRouteDetail": [
+  {
+   "name": "ABACUS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ALICANTE CANAL NORTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ALICANTE CANAL SOUTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "AMETHYST CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ANCHORAGE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "BALFOUR CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "BREWSTER CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "BYRON CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CARNATION CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CAROLYN CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CLINTON CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CLIPPER BASIN",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "COBALT CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "COCOA CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "COLONADE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "COLONY CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CONGO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CORAL CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CORDOVA CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CORTEZ CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DARBY CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DE LIDO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEAUVILLE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEL MAR CANAL NORTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEL MAR CANAL SOUTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEL MONTE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEL PRADO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DEL RIO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DOLPHIN CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DRIFTWOOD CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "FLAMINGO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "FLORIDAN CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "FOSTER CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "GILBERT CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "GLEN COVE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "HASTINGS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "HOGARTH CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LENOX CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LINCOLN CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LORRAINE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LUCERNE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MACKENZIE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MAJESTIC CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MALAGA CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MALALUKA CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MALLORCA CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MANDOLIN CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MANILA CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MARLBORO CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MAYFAIR CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MEREDITH CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MIKADO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MINSTREL CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LAFAYETTE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MONTCLAIRE CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MONTEREY CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MONTICELLO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MOODY CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "NAVAHO CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "NORFOLK CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ODYSSEY CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ORCHID CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ORIOLE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ORPHEUS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PALACO GRANDE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PEACHTREE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PICNIC CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PORT NEUF CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PORT SAINT GERMAIN CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PORT ST. JOE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "PORT ST. LUCIE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "RAINBOW CANAL NORTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "RAINBOW CANAL SOUTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "REYNOLDS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "ROBERTS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SCOTT CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SHAW CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SIERRA CANAL NORTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SIERRA CANAL SOUTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SOUTH TENNYSON CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "STANLEY CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "SWAN CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "VILLAREAL CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "VISTA GRANDE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "WAVELL CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "WENDY CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "WHIPPORWILL CANAL NORTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "WHIPPORWILL CANAL SOUTH",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "CORAL POINTE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "OTTERSREST CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "NASSAU CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DELAND CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "LAS PALMAS CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "RYAN CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MIRAMAR CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "MALIBU CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "BRONTE CANAL",
+   "navSyst": "SW-E",
+   "treatedAsGulfAccess": true
+  },
+  {
+   "name": "DE SOTO CANAL",
+   "navSyst": "SW-D",
+   "treatedAsGulfAccess": true
+  }
+ ],
+ "saltCanalsNoGulfAccessAtAll": []
+}

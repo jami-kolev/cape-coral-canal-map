@@ -1,0 +1,30 @@
+{
+  "pulledAt": "2026-09-23T14:42:41.402Z",
+  "layers": [
+    {
+      "key": "canals",
+      "count": 960,
+      "outFile": "data/raw/canals.geojson"
+    },
+    {
+      "key": "bridges",
+      "count": 160,
+      "outFile": "data/raw/bridges.geojson"
+    },
+    {
+      "key": "weirs",
+      "count": 29,
+      "outFile": "data/raw/weirs.geojson"
+    },
+    {
+      "key": "channelMarkers",
+      "count": 666,
+      "outFile": "data/raw/channel-markers.geojson"
+    },
+    {
+      "key": "cityBoundary",
+      "count": 2,
+      "outFile": "data/raw/city-boundary.geojson"
+    }
+  ]
+}
