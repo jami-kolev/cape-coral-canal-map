@@ -175,7 +175,7 @@ input:focus-visible {
 .map-controls {
   position: absolute;
   right: 12px;
-  bottom: 12px;
+  bottom: calc(var(--footer-h, 0px) + 12px);
   z-index: 900;
   display: flex;
   flex-direction: column;
@@ -215,7 +215,7 @@ input:focus-visible {
   transition: transform 0.25s ease;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: var(--footer-h, 0px);
 }
 
 .panel.open {
@@ -393,7 +393,16 @@ input:focus-visible {
 
 .cta-box p {
   margin: 0 0 10px;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.cta-box .cta-headline {
+  font-family: var(--font-headline);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 6px;
 }
 
 .cta-button {
@@ -422,26 +431,32 @@ input:focus-visible {
 
 #footer-strip {
   position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 900;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: var(--warm-white);
+  border-top: 1px solid var(--linen-stone);
   font-size: 11px;
-  color: var(--ink-black);
-  background: rgba(255, 255, 255, 0.88);
-  padding: 5px 10px;
-  border-radius: 999px;
-  max-width: 60%;
+  line-height: 1.45;
+  color: #4a4a4a;
 }
 
-#footer-strip button {
-  border: none;
-  background: none;
+#footer-strip p {
+  margin: 0 0 3px;
+}
+
+#footer-strip .footer-brand {
+  margin: 0;
+  font-weight: 600;
   color: var(--deep-water);
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 11px;
-  padding: 0;
-  font-family: inherit;
+}
+
+/* The footer is always visible, so everything that docks to the bottom of
+   the map sits above it. --footer-h is measured in app.js. */
+.leaflet-bottom {
+  bottom: var(--footer-h, 0px);
 }
 
 /* ---------- Leaflet marker tweaks ---------- */
@@ -482,9 +497,9 @@ input:focus-visible {
   .panel {
     left: auto;
     right: 16px;
-    bottom: 16px;
+    bottom: calc(var(--footer-h, 0px) + 16px);
     width: 380px;
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - var(--footer-h, 0px) - 100px);
     border-radius: var(--radius);
     transform: translateX(420px);
     transition: transform 0.25s ease;
@@ -496,7 +511,7 @@ input:focus-visible {
 
   .map-controls {
     right: 16px;
-    bottom: 16px;
+    bottom: calc(var(--footer-h, 0px) + 16px);
   }
 
   #app:has(.panel.open) .map-controls {

@@ -30,12 +30,22 @@
     '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>',
   );
 
+  // The footer disclosure is always on screen; tell the CSS how tall it is so
+  // panels and map controls sit above it instead of underneath.
+  const footerEl = document.getElementById('footer-strip');
+  function syncFooterHeight() {
+    document.getElementById('app').style.setProperty('--footer-h', footerEl.offsetHeight + 'px');
+  }
+  syncFooterHeight();
+  if (window.ResizeObserver) new ResizeObserver(syncFooterHeight).observe(footerEl);
+  window.addEventListener('resize', syncFooterHeight);
+
   // ---------------------------------------------------------------------
-  // Panel management (legend / layers / detail / disclaimer share one rule:
+  // Panel management (legend / layers / detail share one rule:
   // opening one closes the others)
   // ---------------------------------------------------------------------
 
-  const panels = ['legend-panel', 'layers-panel', 'detail-panel', 'disclaimer-panel'].map((id) =>
+  const panels = ['legend-panel', 'layers-panel', 'detail-panel'].map((id) =>
     document.getElementById(id),
   );
 
@@ -95,7 +105,6 @@
       closeAllPanels();
     }
   });
-  document.getElementById('disclaimer-toggle').addEventListener('click', () => openPanel('disclaimer-panel'));
 
   // ---------------------------------------------------------------------
   // Styling helpers
@@ -326,20 +335,16 @@
       drawRouteLine(route.routeLine);
     } else if (route && route.gulfAccess) {
       parts.push(
-        `<div class="data-gap-note">This canal is classified by the City as part of the saltwater spreader system, so it does reach the Gulf. We don’t have a clean traced route for it yet, a gap in older City map data. Want us to confirm the exact route, bridges, and clearances for you?</div>`,
+        `<div class="data-gap-note">This canal is classified by the City as part of the saltwater spreader system, so it does reach the Gulf. We don’t have a clean traced route for it yet, a gap in older City map data.</div>`,
       );
     }
 
     parts.push(`
       <div class="cta-box">
-        <p>Want us to confirm this route on the water? Send us the address.</p>
-        <a class="cta-button" href="${CFG.CTA_URL}" target="_blank" rel="noopener">Ask The Kolev Group</a>
+        <p class="cta-headline">${CFG.CTA_HEADLINE}</p>
+        <p>${CFG.CTA_BODY}</p>
+        <a class="cta-button" href="${CFG.CTA_URL}" target="_blank" rel="noopener">${CFG.CTA_BUTTON}</a>
       </div>
-      <p class="disclaimer-note">
-        Reference data from City of Cape Coral records, not a survey. Clearances are approximate and not tide
-        specific. Verify the route, every bridge, depth, seawall, and Gulf access with a surveyor, a marine
-        contractor, and the City before making an offer.
-      </p>
     `);
 
     body.innerHTML = parts.join('\n');
