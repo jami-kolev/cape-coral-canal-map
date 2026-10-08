@@ -68,8 +68,10 @@
     panel.removeAttribute('inert');
     // Move focus into the panel so keyboard/screen-reader users land
     // somewhere sensible instead of staying on a now-offscreen trigger.
+    // preventScroll: without it the browser scrolls the map sideways to reach
+    // the panel while it is still sliding in.
     const heading = panel.querySelector('.panel-close');
-    if (heading) heading.focus();
+    if (heading) heading.focus({ preventScroll: true });
   }
 
   document.querySelectorAll('[data-close-panel]').forEach((btn) => {
@@ -290,9 +292,22 @@
     return null;
   }
 
+  // Zoom so the whole selection is visible in the part of the map the open
+  // panel is NOT covering: the right side on a computer, the bottom on a phone.
+  function fitSelection(bounds, maxZoom) {
+    const headerH = document.getElementById('header').offsetHeight;
+    const footerH = document.getElementById('footer-strip').offsetHeight;
+    const wide = window.innerWidth >= 860;
+    const opts = wide
+      ? { paddingTopLeft: [40, headerH + 30], paddingBottomRight: [420 + 30, footerH + 30] }
+      : { paddingTopLeft: [24, headerH + 24], paddingBottomRight: [24, Math.round(window.innerHeight * 0.44) + footerH + 16] };
+    // animate:false: a second animated fit started while the first is still running gets dropped.
+    map.fitBounds(bounds, { ...opts, maxZoom, animate: false });
+  }
+
   function showCanalDetail(feature, layer) {
     highlightFeature(layer);
-    map.fitBounds(layer.getBounds(), { maxZoom: 16, padding: [40, 40] });
+    fitSelection(layer.getBounds(), 16);
 
     document.getElementById('detail-title').textContent = feature.properties.name || 'Canal';
     const body = document.getElementById('detail-body');
@@ -332,7 +347,7 @@
       );
     } else if (route && route.routeLine) {
       parts.push(renderRouteDetail(route));
-      drawRouteLine(route.routeLine);
+      drawRouteLine(route.routeLine, state.selectedCanalLayer && state.selectedCanalLayer.getBounds());
     } else if (route && route.gulfAccess) {
       parts.push(
         `<div class="data-gap-note">This canal is classified by the City as part of the saltwater spreader system, so it does reach the Gulf. We don’t have a clean traced route for it yet, a gap in older City map data.</div>`,
@@ -377,16 +392,22 @@
     `;
   }
 
-  function drawRouteLine(routeLineCoords) {
+  function drawRouteLine(routeLineCoords, canalBounds) {
     if (!routeLineCoords || routeLineCoords.length < 2) return;
     const latlngs = routeLineCoords.map((c) => [c[1], c[0]]);
-    L.polyline(latlngs, {
-      color: '#191919',
-      weight: 3,
-      dashArray: '2 8',
-      opacity: 0.9,
-      interactive: false,
-    }).addTo(state.highlightLayer);
+    // White casing under a dark dashed line so the route reads on top of both
+    // the blue canals and the pale basemap.
+    L.polyline(latlngs, { color: '#ffffff', weight: 6, opacity: 0.95, interactive: false }).addTo(state.highlightLayer);
+    const line = L.polyline(latlngs, { color: '#191919', weight: 3, dashArray: '1 8', lineCap: 'round', interactive: false }).addTo(
+      state.highlightLayer,
+    );
+    const end = latlngs[latlngs.length - 1];
+    L.circleMarker(end, { radius: 7, color: '#ffffff', weight: 3, fillColor: '#33546c', fillOpacity: 1, interactive: false })
+      .bindTooltip('Open water', { permanent: true, direction: 'top', offset: [0, -8], className: 'route-end-label' })
+      .addTo(state.highlightLayer);
+    const bounds = line.getBounds();
+    if (canalBounds) bounds.extend(canalBounds);
+    fitSelection(bounds, 17);
   }
 
   function highlightFeature(layer) {

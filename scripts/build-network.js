@@ -10,6 +10,13 @@ const turf = require('@turf/turf');
 const { CanalGraph } = require('./lib/graph');
 
 const ROOT = path.join(__dirname, '..');
+// How far a canal's outline may stop short of open water and still count as
+// opening onto it. The City's outlines (drawn from parcel boundaries) end at
+// the lot line, not the water's edge, so shoreline canals routinely stop short.
+// At 0-60 m only 298 of 630 saltwater canals connect; at 100 m nearly all do,
+// including every canal at the southeast river shore, and the one listing with
+// a known real-world route (2501 SW 28th Terrace) doesn't move.
+const OPEN_WATER_TOLERANCE_M = Number(process.env.OPEN_WATER_TOLERANCE_M || 100);
 const NO_WAKE_SPEED_MPH = 5; // single config value per the spec; change here to retune all idle-time estimates
 
 function loadGeoJSON(relPath) {
@@ -40,12 +47,75 @@ function orderBridgesAlongPath(pathNodeIds, graph) {
   return ordered;
 }
 
-function buildRouteLine(pathNodeIds, graph) {
-  return pathNodeIds.map((id) => graph.nodes[id].centroid);
+// Drawing the route straight from canal center to canal center cuts corners
+// across land. Instead it bends at the junction where each pair of canals
+// meet, then finishes at the water's edge, so the line follows the canals.
+function vertsOf(feature) {
+  const g = feature.geometry;
+  const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+  const out = [];
+  for (const poly of polys) for (const ring of poly) for (const pt of ring) out.push(pt);
+  return out;
 }
 
-function summarizeRoute(pathNodeIds, graph) {
-  const routeLine = buildRouteLine(pathNodeIds, graph);
+function nearestPair(vertsA, vertsB) {
+  let best = { d: Infinity, a: null, b: null };
+  for (const a of vertsA) {
+    for (const b of vertsB) {
+      const dx = a[0] - b[0];
+      const dy = a[1] - b[1];
+      const d = dx * dx + dy * dy;
+      if (d < best.d) best = { d, a, b };
+    }
+  }
+  return best;
+}
+
+const jointCache = new Map();
+function jointBetween(a, b) {
+  const key = a.id < b.id ? `${a.id}-${b.id}` : `${b.id}-${a.id}`;
+  if (jointCache.has(key)) return jointCache.get(key);
+  let joint;
+  try {
+    const inter = turf.intersect(turf.featureCollection([a.feature, b.feature]));
+    if (inter) joint = turf.centroid(inter).geometry.coordinates;
+  } catch {
+    // fall through to nearest-vertex
+  }
+  if (!joint) {
+    const { a: pa, b: pb } = nearestPair(vertsOf(a.feature), vertsOf(b.feature));
+    joint = [(pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2];
+  }
+  jointCache.set(key, joint);
+  return joint;
+}
+
+let openWaterVerts = null;
+function endInOpenWater(node, openWaterGeoJSON) {
+  if (!openWaterVerts) openWaterVerts = vertsOf(openWaterGeoJSON.features[0]);
+  const pad = 0.004;
+  const [minX, minY, maxX, maxY] = node.bbox;
+  const nearby = openWaterVerts.filter((v) => v[0] > minX - pad && v[0] < maxX + pad && v[1] > minY - pad && v[1] < maxY + pad);
+  if (nearby.length === 0) return null;
+  return nearestPair(vertsOf(node.feature), nearby).b;
+}
+
+function buildRouteLine(pathNodeIds, graph, openWaterGeoJSON) {
+  const nodes = pathNodeIds.map((id) => graph.nodes[id]);
+  // Junction to junction. Detouring through each canal's center point as
+  // well made a canal whose two junctions sit at the same end look like an
+  // out-and-back spur, inflating distance and idle time.
+  const line = [nodes[0].centroid];
+  for (let i = 1; i < nodes.length; i++) {
+    line.push(jointBetween(nodes[i - 1], nodes[i]));
+  }
+  const end = endInOpenWater(nodes[nodes.length - 1], openWaterGeoJSON);
+  if (end) line.push(end);
+  return line;
+}
+
+function summarizeRoute(pathNodeIds, graph, openWaterGeoJSON) {
+  const routeLine = buildRouteLine(pathNodeIds, graph, openWaterGeoJSON);
   // A canal that itself touches open water is a path of one node/point — zero
   // travel distance, and there's no line to measure.
   const distanceKm = routeLine.length >= 2 ? turf.length(turf.lineString(routeLine), { units: 'kilometers' }) : 0;
@@ -112,7 +182,7 @@ async function main() {
     );
   }
 
-  const openWaterTouchCount = graph.markOpenWaterTouching(openWaterGeoJSON);
+  const openWaterTouchCount = graph.markOpenWaterTouching(openWaterGeoJSON, OPEN_WATER_TOLERANCE_M);
   console.log(`  ${openWaterTouchCount} canal nodes touch the open-water boundary`);
 
   // Flag saltwater canals directly adjacent to freshwater canals with no weir between them —
@@ -163,7 +233,7 @@ async function main() {
         waterType: node.waterType,
         navSyst: node.navSyst,
         gulfAccess: true,
-        ...summarizeRoute([node.id], graph),
+        ...summarizeRoute([node.id], graph, openWaterGeoJSON),
       };
       reachable++;
       continue;
@@ -176,7 +246,7 @@ async function main() {
         waterType: node.waterType,
         navSyst: node.navSyst,
         gulfAccess: true,
-        ...summarizeRoute(path, graph),
+        ...summarizeRoute(path, graph, openWaterGeoJSON),
       };
       reachable++;
     } else {

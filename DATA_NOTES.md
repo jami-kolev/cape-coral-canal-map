@@ -140,18 +140,33 @@ boundary before this ships.
      confirmed there are no SALT/FRESH canal pairs touching without a weir
      between them.
 
-  After all of that: **298 of 630 saltwater canals** get full route detail
-  (bridges in order, distance, lowest clearance, idle time). An earlier build
-  showed 532, but that number was inflated: it counted inland canal basins as
-  open water, which made routes too short or zero. 298 is the honest count.
+  4. **Open-water gap tolerance (100 m).** The City's outlines were drawn
+     from parcel boundaries, so a shoreline canal's outline usually stops at
+     the lot line, a short distance before the water's edge. A canal counts as
+     opening onto open water if its outline is within 100 m of it. This is the
+     step that connected the southeast: at 0 to 60 m only 298 of 630 saltwater
+     canals connect, at 100 m 628 do, and the one listing with a known real
+     route (2501 SW 28th Terrace) doesn't change. It's a judgment call, not a
+     measurement: a canal that really dead-ends 80 m short of the river would
+     be wrongly connected. `OPEN_WATER_TOLERANCE_M` in `build-network.js`.
 
-  The other **332** (mostly the southeast, along the river) don't have a
-  traceable path, but the City's own `NAV_SYST` field classifies every one of
-  them as part of a named spreader system (`SW-A` through `SW-E`), so the app
-  still says "yes, gulf access," sourced from that classification, and says
-  plainly that the detailed route isn't available rather than guessing.
-  `data/processed/network-summary.json` lists them by name. Closing this gap
-  needs the real river-side openings of those canals traced.
+  Result: **628 of 630 saltwater canals** get full route detail (bridges in
+  order, distance, lowest clearance, idle time). The other two, Coral Pointe
+  Canal and Ottersrest Canal, are still classified by the City as part of
+  spreader system SW-E, so the app says "yes, gulf access" and says plainly
+  that the route isn't traced.
+
+  An earlier build showed 532 full routes. That number was inflated by
+  counting inland canal basins as open water (see the open-water section).
+  Another approach, using OSM water shapes to bridge gaps between canals,
+  was tried and removed: it added no coverage once the 100 m tolerance was in.
+
+  **Routes are estimates.** A route is a path through canal outlines, drawn
+  junction to junction. Distance and idle time (at 5 mph) come from that line,
+  so they are approximate. For 2501 SW 28th Terrace the tool says about 40
+  minutes against roughly 45 observed on the water. Checked listings are
+  welcome: run `node scripts/check-addresses.js addresses.txt` (one address
+  per line) to see what the tool says for each.
 - **10 of 29 weirs** sit near only one other canal within the search radius
   (rather than the two you'd expect — upstream and downstream) — usually
   because the "other side" is a different disconnected polygon segment of the

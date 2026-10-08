@@ -238,11 +238,18 @@ class CanalGraph {
     return results;
   }
 
-  markOpenWaterTouching(openWaterGeoJSON) {
+  // `toleranceMeters` forgives the small gap the City's outlines leave between
+  // a canal's end and the water it opens onto (see DATA_NOTES.md).
+  markOpenWaterTouching(openWaterGeoJSON, toleranceMeters = 0) {
+    let water = openWaterGeoJSON.features[0];
+    if (toleranceMeters > 0) water = turf.buffer(water, toleranceMeters, { units: 'meters' });
+    const wb = turf.bbox(water);
     let count = 0;
     for (const node of this.nodes) {
+      node.touchesOpenWater = false;
+      if (!bboxesOverlap(node.bbox, wb)) continue;
       try {
-        node.touchesOpenWater = turf.booleanIntersects(node.feature, openWaterGeoJSON.features[0]);
+        node.touchesOpenWater = turf.booleanIntersects(node.feature, water);
       } catch {
         node.touchesOpenWater = false;
       }

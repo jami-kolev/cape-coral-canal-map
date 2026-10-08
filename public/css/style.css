@@ -36,6 +36,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   font-family: var(--font-ui);
   color: var(--ink-black);
   background: var(--warm-white);
@@ -47,6 +48,9 @@ body {
   height: 100dvh;
   width: 100%;
   overflow: hidden;
+  /* clip, unlike hidden, can never be scrolled by the browser, so focusing
+     something in an offscreen panel can't slide the whole map sideways. */
+  overflow: clip;
 }
 
 #map {
@@ -209,10 +213,11 @@ input:focus-visible {
   background: var(--pure-white);
   box-shadow: var(--shadow);
   border-radius: var(--radius) var(--radius) 0 0;
-  max-height: 70vh;
+  max-height: 44vh;
   overflow-y: auto;
   transform: translateY(100%);
-  transition: transform 0.25s ease;
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s;
   left: 0;
   right: 0;
   bottom: var(--footer-h, 0px);
@@ -220,6 +225,8 @@ input:focus-visible {
 
 .panel.open {
   transform: translateY(0);
+  visibility: visible;
+  transition-delay: 0s;
 }
 
 .panel-header {
@@ -501,8 +508,8 @@ input:focus-visible {
     width: 380px;
     max-height: calc(100vh - var(--footer-h, 0px) - 100px);
     border-radius: var(--radius);
+    max-height: calc(100vh - var(--footer-h, 0px) - 100px);
     transform: translateX(420px);
-    transition: transform 0.25s ease;
   }
 
   .panel.open {
@@ -536,5 +543,25 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .panel {
     transition: none;
+  }
+}
+
+.route-end-label {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--deep-water);
+  border: none;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 859px) {
+  #footer-strip {
+    font-size: 10px;
+    line-height: 1.35;
+    padding-top: 6px;
+  }
+  #footer-strip p {
+    margin-bottom: 2px;
   }
 }
