@@ -358,7 +358,7 @@
       <div class="cta-box">
         <p class="cta-headline">${CFG.CTA_HEADLINE}</p>
         <p>${CFG.CTA_BODY}</p>
-        <a class="cta-button" href="${CFG.CTA_URL}" target="_blank" rel="noopener">${CFG.CTA_BUTTON}</a>
+        <a class="cta-button" href="${CFG.CTA_URL}" target="_top">${CFG.CTA_BUTTON}</a>
       </div>
     `);
 
